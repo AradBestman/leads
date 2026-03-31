@@ -5,7 +5,7 @@ const LandingPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const contentStyle = { textAlign: "center" };
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { data } = await axios.post(
       "https://n8n.juniorsrv.online/webhook-test/9d185431-7bbd-4119-bdaa-f9c2b28d2c17",
