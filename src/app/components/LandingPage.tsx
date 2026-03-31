@@ -22,7 +22,10 @@ const LandingPage = () => {
         <p>This is the new LandPage component inside the app directory.</p>{" "}
         <form onSubmit={handleSubmit} action="">
           {" "}
-          <label for="username" class="block text-sm/6 font-medium text-white">
+          <label
+            htmlFor="name"
+            className="block text-sm/6 font-medium text-white"
+          >
             Name
           </label>
           <input
@@ -32,7 +35,10 @@ const LandingPage = () => {
             type="text"
             placeholder="Enter your name"
           />{" "}
-          <label for="email" class="block text-sm/6 font-medium text-white">
+          <label
+            htmlFor="email"
+            className="block text-sm/6 font-medium text-white"
+          >
             Email
           </label>
           <input
