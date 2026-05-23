@@ -1,57 +1,83 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+
 const LandingPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const contentStyle = { textAlign: "center" };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { data } = await axios.post(
-      "https://n8n.juniorsrv.online/webhook-test/9d185431-7bbd-4119-bdaa-f9c2b28d2c17",
-      { name, email },
-    );
+    try {
+      const { data } = await axios.post(
+        "https://n8n.juniorsrv.online/webhook-test/9d185431-7bbd-4119-bdaa-f9c2b28d2c17",
+        { name, email },
+      );
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
     console.log(name, "This is the Name:name");
     console.log(email, "email");
   };
   return (
-    <div className="bg-blue-500 flex justify-center min-h-screen">
-      <div className="bg-black flex flex-col items-center justify-center p-8 rounded-lg gap-10">
-        {" "}
-        <h1>Welcome to the Landing Page</h1>{" "}
-        <p>This is the new LandPage component inside the app directory.</p>{" "}
-        <form onSubmit={handleSubmit} action="">
-          {" "}
-          <label
-            htmlFor="name"
-            className="block text-sm/6 font-medium text-white"
-          >
-            Name
-          </label>
-          <input
-            className="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-white-500 focus:outline-none sm:text-sm/6"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            type="text"
-            placeholder="Enter your name"
-          />{" "}
-          <label
-            htmlFor="email"
-            className="block text-sm/6 font-medium text-white"
-          >
-            Email
-          </label>
-          <input
-            className="block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-sm/6"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            type="email"
-            placeholder="Enter your email"
-          />{" "}
-          <button type="submit">Submit</button>{" "}
-        </form>{" "}
-      </div>{" "}
+    <div className="min-h-screen flex items-center justify-center bg-blue-500 p-6">
+      <Card className="w-full max-w-md bg-black text-white border-zinc-800">
+        <CardHeader>
+          <CardTitle className="text-2xl">Contact Form</CardTitle>
+          <CardDescription className="text-zinc-400">
+            Enter your information below
+          </CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <Field>
+              <FieldLabel htmlFor="name">Name</FieldLabel>
+
+              <Input
+                id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                type="text"
+                placeholder="Enter your name"
+                className="bg-zinc-900 border-zinc-700 text-white"
+              />
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="email">Email</FieldLabel>
+
+              <Input
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                type="email"
+                placeholder="Enter your email"
+                className="bg-zinc-900 border-zinc-700 text-white"
+              />
+            </Field>
+
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700"
+            >
+              Submit
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </div>
   );
 };
+
 export default LandingPage;
