@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 import {
   Card,
   CardContent,
@@ -9,9 +10,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Field, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { CheckCircle2, Mail, Sparkles, User } from "lucide-react";
+import { CheckCircle2, Mail, Phone, Sparkles, User } from "lucide-react";
+import { LeadFormField } from "./LeadFormField";
+import { validateLeadForm, type LeadFormErrors } from "@/lib/validation/lead";
+import type { LeadFormData } from "@/lib/types/lead";
 
 const benefits = [
   "Get a personal reply from our team within one business day",
@@ -19,27 +21,48 @@ const benefits = [
   "Be the first to hear about new openings and offers",
 ];
 
+const WEBHOOK_URL =
+  "https://n8n.juniorsrv.online/webhook-test/9d185431-7bbd-4119-bdaa-f9c2b28d2c17";
+
 const LandingPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [errors, setErrors] = useState<LeadFormErrors>({});
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
     "idle",
   );
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const data: LeadFormData = { name, email, phone };
+    const result = validateLeadForm(data);
+
+    if (result.errors) {
+      setErrors(result.errors);
+      const firstError = Object.values(result.errors)[0];
+      toast.error(firstError ?? "Please fix the highlighted fields");
+      return;
+    }
+
+    setErrors({});
     setStatus("loading");
     try {
-      await axios.post(
-        "https://n8n.juniorsrv.online/webhook-test/9d185431-7bbd-4119-bdaa-f9c2b28d2c17",
-        { name, email },
-      );
+      await axios.post(WEBHOOK_URL, result.value);
       setStatus("success");
       setName("");
       setEmail("");
+      setPhone("");
+      toast.success("Thanks! We've received your details", {
+        description: "Our team will be in touch soon.",
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
       setStatus("error");
+      toast.error("Something went wrong", {
+        description: "Please try again in a moment.",
+      });
     }
   };
 
@@ -78,37 +101,37 @@ const LandingPage = () => {
 
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <Field>
-                <FieldLabel htmlFor="name">Name</FieldLabel>
-                <div className="relative">
-                  <User className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
-                  <Input
-                    id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    type="text"
-                    placeholder="Enter your name"
-                    required
-                    className="bg-zinc-50 pl-9 border-zinc-200 text-zinc-900"
-                  />
-                </div>
-              </Field>
+              <LeadFormField
+                id="name"
+                label="Name"
+                icon={User}
+                value={name}
+                onChange={setName}
+                placeholder="Enter your name"
+                error={errors.name}
+              />
 
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <div className="relative">
-                  <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-zinc-400" />
-                  <Input
-                    id="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    type="email"
-                    placeholder="Enter your email"
-                    required
-                    className="bg-zinc-50 pl-9 border-zinc-200 text-zinc-900"
-                  />
-                </div>
-              </Field>
+              <LeadFormField
+                id="email"
+                label="Email"
+                icon={Mail}
+                value={email}
+                onChange={setEmail}
+                type="email"
+                placeholder="Enter your email"
+                error={errors.email}
+              />
+
+              <LeadFormField
+                id="phone"
+                label="Phone"
+                icon={Phone}
+                value={phone}
+                onChange={setPhone}
+                type="tel"
+                placeholder="Enter your phone number"
+                error={errors.phone}
+              />
 
               <Button
                 type="submit"
@@ -117,18 +140,6 @@ const LandingPage = () => {
               >
                 {status === "loading" ? "Sending..." : "Submit"}
               </Button>
-
-              {status === "success" && (
-                <p className="text-center text-sm text-emerald-600">
-                  Thanks! We&apos;ve received your details and will be in touch
-                  soon.
-                </p>
-              )}
-              {status === "error" && (
-                <p className="text-center text-sm text-red-600">
-                  Something went wrong — please try again in a moment.
-                </p>
-              )}
             </form>
           </CardContent>
         </Card>
