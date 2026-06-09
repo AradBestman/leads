@@ -21,9 +21,6 @@ const benefits = [
   "Be the first to hear about new openings and offers",
 ];
 
-const WEBHOOK_URL =
-  "https://n8n.juniorsrv.online/webhook-test/9d185431-7bbd-4119-bdaa-f9c2b28d2c17";
-
 const WEBHOOK_URL_prod =
   "https://n8n.juniorsrv.online/webhook/9d185431-7bbd-4119-bdaa-f9c2b28d2c17";
 
