@@ -24,14 +24,17 @@ const benefits = [
 const WEBHOOK_URL =
   "https://n8n.juniorsrv.online/webhook-test/9d185431-7bbd-4119-bdaa-f9c2b28d2c17";
 
+const WEBHOOK_URL_prod =
+  "https://n8n.juniorsrv.online/webhook/9d185431-7bbd-4119-bdaa-f9c2b28d2c17";
+
 const LandingPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState<LeadFormErrors>({});
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
-    "idle",
-  );
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,7 +52,7 @@ const LandingPage = () => {
     setErrors({});
     setStatus("loading");
     try {
-      await axios.post(WEBHOOK_URL, result.value);
+      await axios.post(WEBHOOK_URL_prod, result.value);
       setStatus("success");
       setName("");
       setEmail("");
